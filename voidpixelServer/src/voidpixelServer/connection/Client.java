@@ -60,6 +60,8 @@ public class Client {
 				
 			}
 			
+			clientSocket.close();
+			
 			string.setLength(0);
 			//SERVER CLOSE
 			
