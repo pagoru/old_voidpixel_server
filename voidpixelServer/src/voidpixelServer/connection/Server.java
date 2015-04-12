@@ -1,10 +1,12 @@
 package voidpixelServer.connection;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -52,12 +54,7 @@ public class Server {
 							
 							accept = false;
 							
-							//CLIENT CONNECTION OPEN
-							Socket socket = new Socket(IP, 15051);
-				    		PrintWriter print = new PrintWriter(socket.getOutputStream(), true);
-							print.println(Encrypt.encrypt("refuse"));
-				    		socket.close();
-				    		//CLIENT CONNECTION CLOSE
+							connection(IP, "refuse");
 							
 						}
 						
@@ -82,12 +79,20 @@ public class Server {
 						System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
 						System.out.println(connection); //Desabilitar
 						
-						//CLIENT CONNECTION OPEN
-						Socket socket = new Socket(IP, 15051);
-			    		PrintWriter print = new PrintWriter(socket.getOutputStream(), true);
-						print.println(Encrypt.encrypt(connection + ""));
-			    		socket.close();
-			    		//CLIENT CONNECTION CLOSE
+						connection(IP, connection + "");
+						
+					} else if(inputLine.substring(0, 4).equals("uuid")) {
+						
+						String uuid = read.readNick(inputLine.substring(5, inputLine.length()));
+						
+						System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
+						System.out.println(uuid);
+						
+						connection(IP, uuid);
+						
+					} else {
+						
+						set404(IP);
 						
 					}
 					
@@ -99,23 +104,17 @@ public class Server {
 						System.out.println(IPConnection.toString()); //Desabilitar
 						System.out.println(isConnected.toString()); //Desabilitar
 						
-						//CLIENT CONNECTION OPEN
-						Socket socket = new Socket(IP, 15051);
-			    		PrintWriter print = new PrintWriter(socket.getOutputStream(), true);
-						print.println(Encrypt.encrypt(IPConnection.toString() + isConnected.toString()));
-			    		socket.close();
-			    		//CLIENT CONNECTION CLOSE
+						connection(IP, IPConnection.toString() + isConnected.toString());
+						
+					} else {
+						
+						set404(IP);
 						
 					}
 					
 				} else {
 					
-					//CLIENT CONNECTION OPEN
-					Socket socket = new Socket(IP, 15051);
-		    		PrintWriter print = new PrintWriter(socket.getOutputStream(), true);
-					print.println(Encrypt.encrypt("404"));
-		    		socket.close();
-		    		//CLIENT CONNECTION CLOSE
+					set404(IP);
 					
 				}
 				
@@ -127,6 +126,23 @@ public class Server {
 		}    	
     	
     }
+	
+	public static void connection(String ip, String prin) throws UnknownHostException, IOException{
+		
+		//CLIENT CONNECTION OPEN
+		Socket socket = new Socket(ip, 15051);
+		PrintWriter print = new PrintWriter(socket.getOutputStream(), true);
+		print.println(Encrypt.encrypt(prin));
+		socket.close();
+		//CLIENT CONNECTION CLOSE
+		
+	}
+	
+	public static void set404(String IP) throws IOException{
+		
+		connection(IP, "404");
+		
+	}
 	
 	public static boolean isConnection(String connectText, String IP) throws Exception{
 		

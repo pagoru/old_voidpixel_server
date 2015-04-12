@@ -10,9 +10,9 @@ import com.google.gson.Gson;
 
 public class read {
 	
-	public static String UrlUserName = "http://voidpixel.net/TeStT/api?username=";
-	public static String UrlSalt = "http://voidpixel.net/TeStT/api?salt=";
-	public static String UrlMail = "http://voidpixel.net/TeStT/api?m=";
+	public static String UrlUserName = "http://127.0.0.1/TeStT/api?username=";
+	public static String UrlSalt = "http://127.0.0.1/TeStT/api?salt=";
+	public static String UrlMail = "http://127.0.0.1/TeStT/api?m=";
 
 	public static String readNick(String nick) throws IOException {
 		
@@ -27,7 +27,7 @@ public class read {
         	Gson gson = new Gson();
      		Api UUID = gson.fromJson(read, Api.class);
      		
-     		return UUID.UUID;
+     		return UUID.uuid;
         	
         }
 		return "Not found";

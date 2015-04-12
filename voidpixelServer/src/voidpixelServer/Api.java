@@ -2,7 +2,7 @@ package voidpixelServer;
 
 public class Api {
 	
-	protected String UUID;
+	protected String uuid;
 	protected String username;
 	
 	protected String passVerification;
