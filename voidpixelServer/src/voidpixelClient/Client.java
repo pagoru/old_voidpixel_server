@@ -1,4 +1,4 @@
-package voidpixelServer.connection;
+package voidpixelClient;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -7,8 +7,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-import voidpixelServer.Encrypt;
-import voidpixelServer.Util;
+import util.Encrypt;
+import util.Util;
 
 public class Client {
 	
@@ -23,7 +23,7 @@ public class Client {
 	
 	public static void main(String[] args) throws Exception {
 		
-    	System.out.println("Bienvenido a los servidores de voidpixel! ");
+    	System.out.println("Soy el cliente!");
     	
     	serverSocket = new ServerSocket(15051);
     	

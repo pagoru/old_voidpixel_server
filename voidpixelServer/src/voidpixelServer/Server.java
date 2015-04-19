@@ -1,4 +1,4 @@
-package voidpixelServer.connection;
+package voidpixelServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,9 +10,9 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import voidpixelServer.Encrypt;
-import voidpixelServer.Util;
-import voidpixelServer.read;
+import util.Encrypt;
+import util.Util;
+import voidpixelServer.util.Mysql;
 
 public class Server {
 	
@@ -83,12 +83,35 @@ public class Server {
 						
 					} else if(inputLine.substring(0, 4).equals("uuid")) {
 						
-						String uuid = read.readNick(inputLine.substring(5, inputLine.length()));
+						String uuid = Mysql.connectionSql("SELECT `UUID` FROM `voidpixel_profile` WHERE `username`='" + inputLine.substring(5, inputLine.length()) + "'");
 						
-						System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
-						System.out.println(uuid);
+						if(!uuid.isEmpty()){
+							
+							System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
+							System.out.println(uuid);
+							connection(IP, uuid);
+							
+						} else {
+							
+							set404(IP);
+							
+						}
 						
-						connection(IP, uuid);
+					} else if(inputLine.substring(0, 4).equals("nick")) {
+						
+						String username = Mysql.connectionSql("SELECT `username` FROM `voidpixel_profile` WHERE `UUID`='" + inputLine.substring(5, inputLine.length()) + "'");
+						
+						if(!username.isEmpty()){
+							
+							System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
+							System.out.println(username);
+							connection(IP, username);
+							
+						} else {
+							
+							set404(IP);
+							
+						}
 						
 					} else {
 						

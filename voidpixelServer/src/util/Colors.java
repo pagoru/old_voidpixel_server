@@ -1,4 +1,4 @@
-package voidpixelServer;
+package util;
 
 public class Colors {
 	

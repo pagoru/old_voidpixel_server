@@ -1,4 +1,4 @@
-package voidpixelServer;
+package util;
 
 import java.security.Key;
 import java.util.Base64;
