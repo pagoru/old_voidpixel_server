@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 import util.Encrypt;
+import util.Params;
 import util.Util;
 
 public class Client {
@@ -35,7 +36,7 @@ public class Client {
     		//READ INPUT CLOSE
     		
     		//SERVER CONNECTION OPEN
-			Socket socket = new Socket("5.196.9.64", 15051);
+			Socket socket = new Socket(Params.SERVER_IP, Params.SERVER_PORT);
     		PrintWriter print = new PrintWriter(socket.getOutputStream(), true);
 			print.println(Encrypt.encrypt(word));
     		socket.close();

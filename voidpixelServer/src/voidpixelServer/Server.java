@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import util.Encrypt;
+import util.Params;
 import util.Util;
-import voidpixelServer.util.Mysql;
 
 public class Server {
 	
@@ -32,7 +32,7 @@ public class Server {
 		
     	System.out.println("Bienvenido a los servidores de voidpixel! ");
     	
-    	serverSocket = new ServerSocket(15051);
+    	serverSocket = new ServerSocket(Params.SERVER_PORT);
     	
     	while (true) {
 				
@@ -67,79 +67,81 @@ public class Server {
 			if((inputLine = Encrypt.decrypt((bufferedReader.readLine()))) != null && accept){
 				
 				System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
-				string.append(inputLine); //Desabilitar
-				System.out.println(string); //Desabilitar
+//				string.append(inputLine); //Desabilitar
+//				System.out.println(string); //Desabilitar
 				
-				if(inputLine.length() > 10){
-					
-					if(inputLine.substring(0, 7).equals("connect")){
-						
-						boolean connection = isConnection(inputLine, IP);
-						
-						System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
-						System.out.println(connection); //Desabilitar
-						
-						connection(IP, connection + "");
-						
-					} else if(inputLine.substring(0, 4).equals("uuid")) {
-						
-						String uuid = Mysql.connectionSql("SELECT `UUID` FROM `voidpixel_profile` WHERE `username`='" + inputLine.substring(5, inputLine.length()) + "'");
-						
-						if(!uuid.isEmpty()){
-							
-							System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
-							System.out.println(uuid);
-							connection(IP, uuid);
-							
-						} else {
-							
-							set404(IP);
-							
-						}
-						
-					} else if(inputLine.substring(0, 4).equals("nick")) {
-						
-						String username = Mysql.connectionSql("SELECT `username` FROM `voidpixel_profile` WHERE `UUID`='" + inputLine.substring(5, inputLine.length()) + "'");
-						
-						if(!username.isEmpty()){
-							
-							System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
-							System.out.println(username);
-							connection(IP, username);
-							
-						} else {
-							
-							set404(IP);
-							
-						}
-						
-					} else {
-						
-						set404(IP);
-						
-					}
-					
-				} else if(inputLine.length() == 4){
-					
-					if(inputLine.substring(0, 4).equals("list")){
-						
-						System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
-						System.out.println(IPConnection.toString()); //Desabilitar
-						System.out.println(isConnected.toString()); //Desabilitar
-						
-						connection(IP, IPConnection.toString() + isConnected.toString());
-						
-					} else {
-						
-						set404(IP);
-						
-					}
-					
-				} else {
-					
-					set404(IP);
-					
-				}
+				connection(IP, GameControl.move(inputLine));
+				
+//				if(inputLine.length() > 10){
+//					
+//					if(inputLine.substring(0, 7).equals("connect")){
+//						
+//						boolean connection = isConnection(inputLine, IP);
+//						
+//						System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
+//						System.out.println(connection); //Desabilitar
+//						
+//						connection(IP, connection + "");
+//						
+//					} else if(inputLine.substring(0, 4).equals("uuid")) {
+//						
+//						String uuid = Mysql.connectionSql("SELECT `UUID` FROM `voidpixel_profile` WHERE `username`='" + inputLine.substring(5, inputLine.length()) + "'");
+//						
+//						if(!uuid.isEmpty()){
+//							
+//							System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
+//							System.out.println(uuid);
+//							connection(IP, uuid);
+//							
+//						} else {
+//							
+//							set404(IP);
+//							
+//						}
+//						
+//					} else if(inputLine.substring(0, 4).equals("nick")) {
+//						
+//						String username = Mysql.connectionSql("SELECT `username` FROM `voidpixel_profile` WHERE `UUID`='" + inputLine.substring(5, inputLine.length()) + "'");
+//						
+//						if(!username.isEmpty()){
+//							
+//							System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
+//							System.out.println(username);
+//							connection(IP, username);
+//							
+//						} else {
+//							
+//							set404(IP);
+//							
+//						}
+//						
+//					} else {
+//						
+//						set404(IP);
+//						
+//					}
+//					
+//				} else if(inputLine.length() == 4){
+//					
+//					if(inputLine.substring(0, 4).equals("list")){
+//						
+//						System.out.print(Util.getTime() + " - " + IP + " INFO >: "); //Desabilitar
+//						System.out.println(IPConnection.toString()); //Desabilitar
+//						System.out.println(isConnected.toString()); //Desabilitar
+//						
+//						connection(IP, IPConnection.toString() + isConnected.toString());
+//						
+//					} else {
+//						
+//						set404(IP);
+//						
+//					}
+//					
+//				} else {
+//					
+//					set404(IP);
+//					
+//				}
 				
 			}
 			
@@ -153,7 +155,7 @@ public class Server {
 	public static void connection(String ip, String prin) throws UnknownHostException, IOException{
 		
 		//CLIENT CONNECTION OPEN
-		Socket socket = new Socket(ip, 15051);
+		Socket socket = new Socket(ip, Params.SERVER_PORT);
 		PrintWriter print = new PrintWriter(socket.getOutputStream(), true);
 		print.println(Encrypt.encrypt(prin));
 		socket.close();
@@ -167,47 +169,47 @@ public class Server {
 		
 	}
 	
-	public static boolean isConnection(String connectText, String IP) throws Exception{
-		
-		connectText = connectText.substring(8); //"connect " << 8
-		
-		String newInput = "";
-		
-		String mail = "";
-		boolean mpb = true;
-		
-		String password = "";
-		
-		for (int i = 0; i < connectText.length(); i++) {
-			
-			newInput = connectText.substring(i, i + 1);
-			
-			if(!mpb){
-				
-				password = password + newInput;
-				
-			}
-			
-			if(!newInput.equals(" ") && mpb){
-				
-				mail = mail + newInput;
-				
-			} else {
-				
-				mpb = false;
-				
-			}
-			
-			
-		}
-		
-		boolean verified = read.getVerify(mail, password);
-		
-		IPConnection.add(IP);
-		isConnected.add(verified);
-		
-		return verified;
-		
-	}
+//	public static boolean isConnection(String connectText, String IP) throws Exception{
+//		
+//		connectText = connectText.substring(8); //"connect " << 8
+//		
+//		String newInput = "";
+//		
+//		String mail = "";
+//		boolean mpb = true;
+//		
+//		String password = "";
+//		
+//		for (int i = 0; i < connectText.length(); i++) {
+//			
+//			newInput = connectText.substring(i, i + 1);
+//			
+//			if(!mpb){
+//				
+//				password = password + newInput;
+//				
+//			}
+//			
+//			if(!newInput.equals(" ") && mpb){
+//				
+//				mail = mail + newInput;
+//				
+//			} else {
+//				
+//				mpb = false;
+//				
+//			}
+//			
+//			
+//		}
+//		
+//		boolean verified = read.getVerify(mail, password);
+//		
+//		IPConnection.add(IP);
+//		isConnected.add(verified);
+//		
+//		return verified;
+//		
+//	}
 	
 }
